@@ -11,4 +11,8 @@ Zipten dosyayı çıkar conf dosyasını düzelt
 clusterlere at mysql dosyalarını 
 
 
-golang gofiber websocket    
+golang gofiber 
+
+
+database 
+id token name description port password
