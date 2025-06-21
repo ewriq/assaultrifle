@@ -1,10 +1,11 @@
 package Database
 
 import (
-	"auth-api/Form"
-	"auth-api/Utils"
+	"assaultrifle/Form"
+	"assaultrifle/Utils"
 	"database/sql"
 	"fmt"
+
 	_ "github.com/go-sql-driver/mysql"
 )
 

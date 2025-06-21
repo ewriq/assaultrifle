@@ -1,7 +1,8 @@
 package Routes
 
 import (
-	Handler "auth-api/Handler"
+	Handler "assaultrifle/Handler"
+
 	"github.com/gofiber/fiber/v2"
 )
 

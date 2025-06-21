@@ -19,7 +19,7 @@
         const token = response.data.token;
         Cookies.set("token", token);
         error = "Başarılı! Yönlendiriliyorsunuz...";
-        setTimeout(() => goto("/me"), 3000);
+        setTimeout(() => goto("/panel"), 3000);
       } else {
         error = "Email ya da parola hatalı";
       }

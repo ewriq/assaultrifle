@@ -3,6 +3,8 @@
   import { goto } from "$app/navigation";
   import Cookies from "js-cookie";
   import axios from "axios";
+	import List from '../../components/Container/List.svelte';
+  import Add from '../../components/Container/Add.svelte';
 
   let user: any = null;
   const token = Cookies.get("token");
@@ -35,6 +37,8 @@
   {:else}
     <p>Loading user data...</p>
   {/if}
+  <Add />
+  <List />
 </main>
 
 <style>

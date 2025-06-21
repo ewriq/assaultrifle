@@ -16,3 +16,13 @@ golang gofiber
 
 database 
 id token name description port password
+
+
+
+ #DOCKER CLİ PACKAGE oluştur 
+
+
+
+ eklenecek containerler 
+
+ Code-Server Supabase Nextcloud Nginx Redis WordPress Node.js App MongoDB Python App Nginx  Node.js App Redis Golang,

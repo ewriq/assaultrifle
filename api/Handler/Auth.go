@@ -1,9 +1,10 @@
 package Handler
 
 import (
-	"auth-api/Database"
+	"assaultrifle/Database"
+	"assaultrifle/Form"
 	"strings"
-	"auth-api/Form"
+
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -29,7 +30,7 @@ func Login(c *fiber.Ctx) error {
 			})
 		}
 	}
- return nil
+	return nil
 }
 
 func isValidEmail(email string) bool {
