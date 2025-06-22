@@ -16,19 +16,8 @@
 
 ---
 
-<<<<<<< Updated upstream
 ### Eklenecek Containerler
 - Node.js App  
 - MongoDB  
 - Python App  
 - Golang App
-=======
-golang gofiber 
-
-
-
-
- eklenecek containerler 
-
-      Node.js App MongoDB Python App   Node.js App  Golang,
->>>>>>> Stashed changes
