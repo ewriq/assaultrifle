@@ -14,4 +14,4 @@ golang gofiber
 
  eklenecek containerler 
 
- Code-Server Supabase Nextcloud Nginx Redis WordPress Node.js App MongoDB Python App Nginx  Node.js App Redis Golang,
+     WordPress Node.js App MongoDB Python App   Node.js App  Golang,

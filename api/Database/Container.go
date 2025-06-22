@@ -19,9 +19,9 @@ listALL
 func ContainerAdd(name, password, port, user, types string) (bool, string) {
 	if !FinderPort(port) {
 		if types == "MySql" {
-			//pull := Container.PullImage("mysql:8.0")
-			//if pull == nil {
-				Token, errr := Container.CreateMySQLContainer(name, "mysql:8.0", port, password)
+			pull := Container.PullImage("mysql:8.0")
+			if pull == nil {
+			Token, errr := Container.CreateMySQLContainer(name, "mysql:8.0", port, password)
 			if errr == nil {
 				query := "INSERT INTO container (name, password, port, user, types, token) VALUES (?, ?, ?, ?, ?,?)"
 				_, err := db.Exec(query, name, password, port, user, "MySql", Token)
@@ -31,14 +31,14 @@ func ContainerAdd(name, password, port, user, types string) (bool, string) {
 				}
 				return true, Token
 			}
-			//}
-		
+			}
+
 		}
 
 		if types == "PostgreSql" {
-			//pull := Container.PullImage("postgres:16")
-			//if pull == nil {
-			Token, errr := Container.CreatePostgresContainer(name,"postgres:16", port, password)
+			pull := Container.PullImage("postgres:16")
+			if pull == nil {
+			Token, errr := Container.CreatePostgresContainer(name, "postgres:16", port, password)
 			if errr == nil {
 				query := "INSERT INTO container (name, password, port, user, types, token) VALUES (?, ?, ?, ?, ?,?)"
 				_, err := db.Exec(query, name, password, port, user, "PostgreSql", Token)
@@ -48,27 +48,26 @@ func ContainerAdd(name, password, port, user, types string) (bool, string) {
 				}
 				return true, Token
 			}
-		//}
+			}
+		}
+
+		if types == "NodeJS" {
+			pull := Container.PullImage("node:18")
+			if pull == nil {
+				Token, errr := Container.CreateNodeContainer(name, "node:18", port)
+				if errr == nil {
+					query := "INSERT INTO container (name, password, port, user, types, token) VALUES (?, ?, ?, ?, ?,?)"
+					_, err := db.Exec(query, name, password, port, user, "Nextcloud", Token)
+					if err != nil {
+						fmt.Println(err)
+						return false, ""
+					}
+					return true, Token
+				}
+			}
 		}
 
 		
-		
-		
-		if types == "NodeJS" {
-			pull := Container.PullImage("lscr.io/linuxserver/nextcloud:latest")
-			if pull == nil {
-			Token, errr := Container.CreateNextcloudContainer(name,"lscr.io/linuxserver/nextcloud:latest", port)
-			if errr == nil {
-				query := "INSERT INTO container (name, password, port, user, types, token) VALUES (?, ?, ?, ?, ?,?)"
-				_, err := db.Exec(query, name, password, port, user, "Nextcloud", Token)
-				if err != nil {
-					fmt.Println(err)
-					return false, ""
-				}
-				return true, Token
-			}
-		}
-		}
 	}
 	return false, ""
 }
