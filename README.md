@@ -7,19 +7,8 @@ Sveltekit
 Tailwind 
 Flowbite Svelte
 
-Zipten dosyayı çıkar conf dosyasını düzelt 
-clusterlere at mysql dosyalarını 
-
-
 golang gofiber 
 
-
-database 
-id token name description port password
-
-
-
- #DOCKER CLİ PACKAGE oluştur 
 
 
 
