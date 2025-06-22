@@ -2,33 +2,29 @@ package Container
 
 import (
 	"fmt"
-	"os/exec"
-	"strings"
+
+	"github.com/ewriq/pouch"
 )
 
+func CreateMySQLContainer(name, img, port, password string) (string, error) {
+	fmt.Println("📦 MySQL container oluşturuluyor...")
 
-func PullMySQLImage() error {
-	cmd := exec.Command("docker", "pull", "mysql:8.0")
-	fmt.Println("📦 Image çekiliyor...")
-	if out, err := cmd.CombinedOutput(); err != nil {
-		return fmt.Errorf("image çekilemedi: %v\n%s", err, out)
+	opt := pouch.CreateOptions{
+		Name:  name,
+		Image: img,
+		Port:  port,
+		EnvVars: map[string]string{
+			"MYSQL_ROOT_PASSWORD": password,
+		},
+		Labels: map[string]string{
+			"type": "mysql",
+		},
 	}
-	return nil
-}
 
-func CreateMySQLContainer(port, password string) (string, error) {
-	cmd := exec.Command("docker", "create",
-		"-e", "MYSQL_ROOT_PASSWORD="+password,
-		"-p", port+":3306",
-		"mysql:8.0",
-	)
-
-	fmt.Println("📦 Container oluşturuluyor...")
-
-	output, err := cmd.CombinedOutput()
+	id, err := pouch.Create(opt)
 	if err != nil {
-		return "", fmt.Errorf("container oluşturulamadı: %v\n%s", err, output)
+		return "", fmt.Errorf("container oluşturulamadı: %v", err)
 	}
-	return strings.TrimSpace(string(output)), nil
-}
 
+	return id, nil
+}

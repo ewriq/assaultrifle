@@ -13,6 +13,7 @@ func Container(app fiber.Router) {
 	app.Post("/listall", Handler.ContainerListAllHandler)
 	app.Post("/start", Handler.ContainerStartHandler)
 	app.Post("/stop", Handler.ContainerStopHandler)
+	app.Post("/status", Handler.ContainerStatusHandler)
 }
 /*
 del

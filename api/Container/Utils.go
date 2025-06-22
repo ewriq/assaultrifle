@@ -2,41 +2,32 @@ package Container
 
 import (
 	"fmt"
-	"os/exec"
-	"strings"
+
+	"github.com/ewriq/pouch"
 )
 
-func StartContainer(ID string) error {
-	cmd := exec.Command("docker", "start", ID)
+func StartContainer(id string) error {
 	fmt.Println("🚀 Container başlatılıyor...")
-	if out, err := cmd.CombinedOutput(); err != nil {
-		return fmt.Errorf("container başlatılamadı: %v\n%s", err, out)
+	return pouch.Start(id)
+}
+
+func PullImage(img string) error {
+	fmt.Println("📦 Image çekiliyor...")
+	if err := pouch.Pull(img); err != nil {
+		return fmt.Errorf("image çekilemedi: %v", err)
 	}
 	return nil
 }
 
-func StopContainer(ID string) error {
-	cmd := exec.Command("docker", "stop", ID)
-	if out, err := cmd.CombinedOutput(); err != nil {
-		return fmt.Errorf("container durdurulamadı: %v\n%s", err, out)
-	}
-	return nil
+func StopContainer(id string) error {
+	return pouch.Stop(id)
 }
 
-func GetContainerStatus(ID string) (string, error) {
-	cmd := exec.Command("docker", "inspect", "-f", "{{.State.Status}}", ID)
-	output, err := cmd.CombinedOutput()
-	if err != nil {
-		return "", fmt.Errorf("durum alınamadı: %v\n%s", err, output)
-	}
-	return strings.TrimSpace(string(output)), nil
+func GetContainerStatus(id string) (map[string]string, error) {
+	return pouch.ContainerStats(id)
 }
 
-func DeleteContainer(ID string) error {
-	cmd := exec.Command("docker", "rm", ID)
-	fmt.Println("🗑️ Container siliniyor...")
-	if out, err := cmd.CombinedOutput(); err != nil {
-		return fmt.Errorf("container silinemedi: %v\n%s", err, out)
-	}
-	return nil
+func DeleteContainer(id string) error {
+	_, err := pouch.Remove(id, false)
+	return err
 }

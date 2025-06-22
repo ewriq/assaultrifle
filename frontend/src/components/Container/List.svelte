@@ -45,7 +45,10 @@
     await axios.post(`${API}/api/container/stop`, { token });
     await fetchContainers();
   }
-
+  async function statusContainer(token: string) {
+    await axios.post(`${API}/api/container/status`, { token });
+    await fetchContainers();
+  }
   onMount(fetchContainers);
 </script>
 
@@ -81,7 +84,11 @@
               on:click={() => deleteContainer(container.token)}
               class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
               >Sil</button
-            >
+            >    <button
+            on:click={() => statusContainer(container.token)}
+            class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+            >Sil</button
+          >
           </div>
         </div>
       </li>

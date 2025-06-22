@@ -156,3 +156,28 @@ func ContainerStopHandler(c *fiber.Ctx) error {
 		"message": "Container durdu",
 	})
 }
+
+func ContainerStatusHandler(c *fiber.Ctx) error {
+	var body struct {
+		Token string `json:"token"`
+	}
+	if err := c.BodyParser(&body); err != nil || body.Token == "" {
+		return c.Status(400).JSON(fiber.Map{
+			"status": "error",
+			"error":  "Token eksik",
+		})
+	}
+
+	data, err := Container.GetContainerStatus(body.Token); 
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{
+			"status": "error",
+			"error":  "Veri alınamadı",
+		})
+	}
+
+	return c.JSON(fiber.Map{
+		"status":  "OK",
+		"data": data,
+	})
+}
