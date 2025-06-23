@@ -61,16 +61,16 @@ func ContainerListMyHandler(c *fiber.Ctx) error {
 
 func ContainerListAllHandler(c *fiber.Ctx) error {
 	var body struct {
-		User string `json:"user"`
+		Token string `json:"user"`
 	}
-	if err := c.BodyParser(&body); err != nil || body.User == "" {
+	if err := c.BodyParser(&body); err != nil || body.Token == "" {
 		return c.Status(400).JSON(fiber.Map{
 			"status": "error",
 			"error":  "Kullanıcı adı eksik",
 		})
 	}
 
-	containers, err := Database.ContainerListAll(body.User)
+	containers, err := Database.ContainerListAll()
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{
 			"status": "error",

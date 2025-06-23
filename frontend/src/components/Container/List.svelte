@@ -3,6 +3,9 @@
   import axios from "axios";
   import Cookies from "js-cookie";
 
+  // Terminal component
+  import Terminal from "./Cmd.svelte";
+
   const user = Cookies.get("token");
 
   type Container = {
@@ -18,6 +21,9 @@
   let error: string | null = null;
 
   const API = "http://localhost:3000";
+
+  let showModal = false;
+  let activeContainerToken = "";
 
   async function fetchContainers() {
     loading = true;
@@ -49,6 +55,19 @@
     await axios.post(`${API}/api/container/status`, { token });
     await fetchContainers();
   }
+
+
+  function openTerminal(token: string) {
+    activeContainerToken = token;
+    showModal = true;
+  }
+
+
+  function closeModal() {
+    showModal = false;
+    activeContainerToken = "";
+  }
+
   onMount(fetchContainers);
 </script>
 
@@ -69,29 +88,55 @@
             <p class="text-sm text-gray-600">Token: {container.token}</p>
             <p class="text-sm text-gray-600">Tür: {container.type}</p>
           </div>
-          <div class="space-x-2">
+          <div class="space-x-2 flex items-center">
             <button
               on:click={() => startContainer(container.token)}
               class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600"
-              >Başlat</button
-            >
+            >Başlat</button>
+
             <button
               on:click={() => stopContainer(container.token)}
               class="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600"
-              >Durdur</button
-            >
+            >Durdur</button>
+
             <button
               on:click={() => deleteContainer(container.token)}
               class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
-              >Sil</button
-            >    <button
-            on:click={() => statusContainer(container.token)}
-            class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
-            >Sil</button
-          >
+            >Sil</button>
+
+            <button
+              on:click={() => statusContainer(container.token)}
+              class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
+            >Durum</button>
+
+            <button
+              on:click={() => openTerminal(container.token)}
+              class="bg-indigo-600 text-white px-3 py-1 rounded hover:bg-indigo-700"
+            >Terminal Aç</button>
           </div>
         </div>
       </li>
     {/each}
   </ul>
+{/if}
+
+{#if showModal}
+  <div
+    class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50"
+    on:click={closeModal}
+  >
+    <div
+      class="bg-white p-6 rounded-lg max-w-4xl w-full"
+      on:click|stopPropagation
+    >
+      <button
+        class="mb-4 px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+        on:click={closeModal}
+      >
+        Kapat
+      </button>
+
+      <Terminal containerId={activeContainerToken} />
+    </div>
+  </div>
 {/if}

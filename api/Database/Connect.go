@@ -1,20 +1,23 @@
 package Database
 
 import (
-	"database/sql"
+	"assaultrifle/Form"
 	"fmt"
 
-	_ "github.com/go-sql-driver/mysql"
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
 )
 
-var db *sql.DB
+var DB *gorm.DB
 
 func init() {
+	dsn := "root@tcp(localhost:3306)/auth?charset=utf8mb4&parseTime=True&loc=Local"
 	var err error
-	db, err = sql.Open("mysql", "root@tcp(localhost:3306)/auth")
+	DB, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
-		panic(err.Error())
-	} else {
-		fmt.Print("Damm, In connected !")
+		panic("Veritabanına bağlanılamadı: " + err.Error())
 	}
+
+	DB.AutoMigrate(&Form.User{}, &Form.Container{})
+	fmt.Println("✅ GORM ile MySQL bağlantısı kuruldu ve tablolar migrat edildi.")
 }

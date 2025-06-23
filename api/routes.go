@@ -6,6 +6,7 @@ import (
 	"assaultrifle/Routes"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/websocket/v2"
 
 	"github.com/gofiber/fiber/v2/middleware/helmet"
 )
@@ -20,6 +21,7 @@ func Initalize(app *fiber.App) {
 	container := app.Group("/api/container/")
 	
 	app.Get("/", Handler.Home)
+	app.Get("/ws/:id", websocket.New(Handler.WebSocket))
 
 	Routes.Auth(auth)
 	Routes.Container(container)

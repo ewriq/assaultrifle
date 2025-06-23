@@ -3,70 +3,56 @@ package Database
 import (
 	"assaultrifle/Form"
 	"assaultrifle/Utils"
-	"database/sql"
-	"fmt"
-
-	_ "github.com/go-sql-driver/mysql"
+	"errors"
 )
 
-func Users(Token string) (Form.User, error) {
-	query := "SELECT * FROM user WHERE token = ?"
-	row := db.QueryRow(query, Token)
-
+func Login(email, password string) (string, error) {
 	var user Form.User
-	err := row.Scan(&user.Token, &user.Username, &user.Password, &user.Email, &user.Perm)
-	if err != nil {
-		if err == sql.ErrNoRows {
-			return Form.User{}, fmt.Errorf("kullanıcı bulunamadı")
-		}
-		return Form.User{}, err
+	result := DB.Where("email = ? AND password = ?", email, password).First(&user)
+	if result.Error != nil {
+		return "", errors.New("Kullanıcı bulunamadı")
+	}
+	return user.Token, nil
+}
+
+func Register(email, password, username string) (bool, string) {
+	var existing Form.User
+	if err := DB.Where("email = ?", email).First(&existing).Error; err == nil {
+		return false, ""
+	}
+
+	token := Utils.Token(10)
+	user := Form.User{
+		Username: username,
+		Password: password,
+		Email:    email,
+		Token:    token,
+	}
+
+	if err := DB.Create(&user).Error; err != nil {
+		return false, ""
+	}
+
+	return true, token
+}
+
+func Users(token string) (Form.User, error) {
+	var user Form.User
+	if err := DB.Where("token = ?", token).First(&user).Error; err != nil {
+		return Form.User{}, errors.New("kullanıcı bulunamadı")
 	}
 	return user, nil
 }
 
-func Login(email, password string) (string, error) {
-	query := "SELECT token FROM user WHERE email = ? AND password = ?"
-	row := db.QueryRow(query, email, password)
-
-	var token string
-	if err := row.Scan(&token); err != nil {
-		if err == sql.ErrNoRows {
-			return "", fmt.Errorf("Kullanıcı bulunamadı")
-		}
-		return "", err
+func ValidateContainerAccess(containerToken, userToken string) (bool, error) {
+	var container Form.Container
+	if err := DB.Where("token = ?", containerToken).First(&container).Error; err != nil {
+		return false, errors.New("container bulunamadı")
 	}
 
-	return token, nil
-}
-
-func Register(email, password, username string) (bool, string) {
-	Token := Utils.Token(10)
-	if !FinderEmail(email) {
-		query := "INSERT INTO user (username, password, email, token) VALUES (?, ?, ?, ?)"
-		_, err := db.Exec(query, username, password, email, Token)
-		if err != nil {
-			fmt.Println(err)
-			return false, ""
-		}
-		return true, Token
-	} else {
-		return false, ""
-	}
-}
-
-func FinderEmail(email string) bool {
-	query := "SELECT COUNT(*) FROM user WHERE email = ?"
-	row := db.QueryRow(query, email)
-
-	var user int
-	err := row.Scan(&user)
-	if err != nil {
-		return false
+	if container.User != userToken {
+		return false, errors.New("yetkisiz erişim")
 	}
 
-	if user == 0 {
-		return false
-	}
-
-	return true
+	return true, nil
 }

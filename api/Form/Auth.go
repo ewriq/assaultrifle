@@ -1,12 +1,18 @@
 package Form
 
+import (
+	"gorm.io/gorm"
+)
+
 type User struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
-	Email    string `json:"email"`
-	Token    string `json:"token"`
-	Perm 	 string `json:"perm"`
+	gorm.Model
+	Username string
+	Password string
+	Email    string `gorm:"unique"`
+	Token    string `gorm:"unique"`
+	Perm     string
 }
+
 
 type UserBody struct {
 	Username string `json:"username"`
@@ -16,4 +22,9 @@ type UserBody struct {
 
 type UserInfo struct {
 	Token string `json:"token"`
+}
+
+
+func (User) TableName() string {
+	return "user"
 }
