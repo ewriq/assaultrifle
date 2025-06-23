@@ -45,7 +45,7 @@ func ContainerAdd(name, password, port, user, types string) (bool, string) {
 		Password: password,
 		Port:     port,
 		User:     user,
-		Type:     types,
+		Types:     types,
 		Token:    token,
 	}
 

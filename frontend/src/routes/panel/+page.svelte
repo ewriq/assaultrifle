@@ -33,7 +33,7 @@
 
 <main class="p-6 max-w-6xl mx-auto space-y-10">
   {#if user}
-    <h1>Welcome, {user.email}!</h1>
+    <h1>Welcome, {user.Email}!</h1>
   {:else}
     <p>Loading user data...</p>
   {/if}

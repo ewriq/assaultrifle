@@ -9,11 +9,11 @@
   const user = Cookies.get("token");
 
   type Container = {
-    name: string;
-    password: string;
-    port: number;
-    token: string;
-    type: string;
+    Name: string;
+    Password: string;
+    Port: number;
+    Token: string;
+    Types: string;
   };
 
   let containers: Container[] = [];
@@ -83,34 +83,34 @@
       <li class="p-4 rounded-lg border shadow bg-white">
         <div class="flex justify-between items-center">
           <div>
-            <h2 class="font-bold text-lg">{container.name}</h2>
-            <p class="text-sm text-gray-600">Port: {container.port}</p>
-            <p class="text-sm text-gray-600">Token: {container.token}</p>
-            <p class="text-sm text-gray-600">Tür: {container.type}</p>
+            <h2 class="font-bold text-lg">{container.Name}</h2>
+            <p class="text-sm text-gray-600">Port: {container.Port}</p>
+            <p class="text-sm text-gray-600">Token: {container.Token}</p>
+            <p class="text-sm text-gray-600">Tür: {container.Types}</p>
           </div>
           <div class="space-x-2 flex items-center">
             <button
-              on:click={() => startContainer(container.token)}
+              on:click={() => startContainer(container.Token)}
               class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600"
             >Başlat</button>
 
             <button
-              on:click={() => stopContainer(container.token)}
+              on:click={() => stopContainer(container.Token)}
               class="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600"
             >Durdur</button>
 
             <button
-              on:click={() => deleteContainer(container.token)}
+              on:click={() => deleteContainer(container.Token)}
               class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
             >Sil</button>
 
             <button
-              on:click={() => statusContainer(container.token)}
+              on:click={() => statusContainer(container.Token)}
               class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
             >Durum</button>
 
             <button
-              on:click={() => openTerminal(container.token)}
+              on:click={() => openTerminal(container.Token)}
               class="bg-indigo-600 text-white px-3 py-1 rounded hover:bg-indigo-700"
             >Terminal Aç</button>
           </div>

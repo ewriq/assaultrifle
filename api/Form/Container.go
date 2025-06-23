@@ -17,7 +17,7 @@ type Container struct {
 	Port     string `gorm:"unique"`
 	Token    string `gorm:"unique"`
 	User     string
-	Type     string
+	Types     string
 	ID       string
 }
 
