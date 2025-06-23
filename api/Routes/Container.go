@@ -3,7 +3,7 @@ package Routes
 import (
 	Handler "assaultrifle/Handler"
 
-	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v3"
 )
 
 func Container(app fiber.Router) {
@@ -15,11 +15,12 @@ func Container(app fiber.Router) {
 	app.Post("/stop", Handler.ContainerStopHandler)
 	app.Post("/status", Handler.ContainerStatusHandler)
 }
+
 /*
 del
 add
 listmy
 listall
-start 
+start
 stop
 */

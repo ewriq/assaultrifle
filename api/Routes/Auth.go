@@ -3,7 +3,7 @@ package Routes
 import (
 	Handler "assaultrifle/Handler"
 
-	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v3"
 )
 
 func Auth(app fiber.Router) {

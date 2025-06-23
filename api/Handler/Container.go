@@ -5,13 +5,12 @@ import (
 	"assaultrifle/Database"
 	"assaultrifle/Form"
 
-	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v3"
 )
 
-
-func ContainerAddHandler(c *fiber.Ctx) error {
+func ContainerAddHandler(c fiber.Ctx) error {
 	var req Form.ContainerAddRequest
-	if err := c.BodyParser(&req); err != nil {
+	if err := c.Bind().Body(&req); err != nil {
 		return c.Status(400).JSON(fiber.Map{
 			"status": "error",
 			"error":  "Invalid input",
@@ -33,12 +32,11 @@ func ContainerAddHandler(c *fiber.Ctx) error {
 	})
 }
 
-
-func ContainerListMyHandler(c *fiber.Ctx) error {
+func ContainerListMyHandler(c fiber.Ctx) error {
 	var body struct {
 		User string `json:"user"`
 	}
-	if err := c.BodyParser(&body); err != nil || body.User == "" {
+	if err := c.Bind().Body(&body); err != nil || body.User == "" {
 		return c.Status(400).JSON(fiber.Map{
 			"status": "error",
 			"error":  "Kullanıcı adı eksik",
@@ -59,11 +57,11 @@ func ContainerListMyHandler(c *fiber.Ctx) error {
 	})
 }
 
-func ContainerListAllHandler(c *fiber.Ctx) error {
+func ContainerListAllHandler(c fiber.Ctx) error {
 	var body struct {
-		Token string `json:"user"`
+		User string `json:"user"`
 	}
-	if err := c.BodyParser(&body); err != nil || body.Token == "" {
+	if err := c.Bind().Body(&body); err != nil || body.User == "" {
 		return c.Status(400).JSON(fiber.Map{
 			"status": "error",
 			"error":  "Kullanıcı adı eksik",
@@ -84,11 +82,11 @@ func ContainerListAllHandler(c *fiber.Ctx) error {
 	})
 }
 
-func ContainerDeleteHandler(c *fiber.Ctx) error {
+func ContainerDeleteHandler(c fiber.Ctx) error {
 	var body struct {
 		Token string `json:"token"`
 	}
-	if err := c.BodyParser(&body); err != nil || body.Token == "" {
+	if err := c.Bind().Body(&body); err != nil || body.Token == "" {
 		return c.Status(400).JSON(fiber.Map{
 			"status": "error",
 			"error":  "Token eksik",
@@ -109,11 +107,11 @@ func ContainerDeleteHandler(c *fiber.Ctx) error {
 	})
 }
 
-func ContainerStartHandler(c *fiber.Ctx) error {
+func ContainerStartHandler(c fiber.Ctx) error {
 	var body struct {
 		Token string `json:"token"`
 	}
-	if err := c.BodyParser(&body); err != nil || body.Token == "" {
+	if err := c.Bind().Body(&body); err != nil || body.Token == "" {
 		return c.Status(400).JSON(fiber.Map{
 			"status": "error",
 			"error":  "Token eksik",
@@ -133,11 +131,11 @@ func ContainerStartHandler(c *fiber.Ctx) error {
 	})
 }
 
-func ContainerStopHandler(c *fiber.Ctx) error {
+func ContainerStopHandler(c fiber.Ctx) error {
 	var body struct {
 		Token string `json:"token"`
 	}
-	if err := c.BodyParser(&body); err != nil || body.Token == "" {
+	if err := c.Bind().Body(&body); err != nil || body.Token == "" {
 		return c.Status(400).JSON(fiber.Map{
 			"status": "error",
 			"error":  "Token eksik",
@@ -157,18 +155,18 @@ func ContainerStopHandler(c *fiber.Ctx) error {
 	})
 }
 
-func ContainerStatusHandler(c *fiber.Ctx) error {
+func ContainerStatusHandler(c fiber.Ctx) error {
 	var body struct {
 		Token string `json:"token"`
 	}
-	if err := c.BodyParser(&body); err != nil || body.Token == "" {
+	if err := c.Bind().Body(&body); err != nil || body.Token == "" {
 		return c.Status(400).JSON(fiber.Map{
 			"status": "error",
 			"error":  "Token eksik",
 		})
 	}
 
-	data, err := Container.GetContainerStatus(body.Token); 
+	data, err := Container.GetContainerStatus(body.Token)
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{
 			"status": "error",
@@ -177,7 +175,7 @@ func ContainerStatusHandler(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(fiber.Map{
-		"status":  "OK",
-		"data": data,
+		"status": "OK",
+		"data":   data,
 	})
 }
