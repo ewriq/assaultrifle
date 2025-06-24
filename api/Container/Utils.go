@@ -54,3 +54,4 @@ func GetContainerLogs(id string) (string, error) {
 
 	return logs, nil
 }
+

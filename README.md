@@ -97,10 +97,6 @@
 * UX feedback mesajları eksik / karışık
 
 Bu gün yapılacaklar :
-* Status takibi (durum polling)
-* Container restart fonksiyonu yok
-* Real-time console output eksik (WebSocket/xterm)
-* Container log takibi yok
 * Healthcheck yok
 * Otomatik container temizliği yok
 * Container dosya yükleme / bind mount eksik
