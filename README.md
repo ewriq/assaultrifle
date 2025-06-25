@@ -103,3 +103,7 @@ Bu gün yapılacaklar :
 * İstatistik dashboard’u yok
 * JWT Auth Middleware eksik
 * Parola hashleme eksik (bcrypt ile yapılmalı)
+
+
+
++ p/containerid/files/path="/"
