@@ -55,3 +55,24 @@ func GetContainerLogs(id string) (string, error) {
 	return logs, nil
 }
 
+func ListContainerFiles(containerID, containerPath string) ([]string, error) {
+	fmt.Printf("📂 Container (%s) içindeki dosyalar listeleniyor: %s\n", containerID, containerPath)
+	
+	files, err := pouch.ListFiles(containerID, containerPath)
+	if err != nil {
+		return nil, fmt.Errorf("dosyalar listelenemedi: %v", err)
+	}
+	return files, nil
+}
+
+
+func DeleteContainerFile(containerID, filePath string) error {
+	fmt.Printf("🗑️ Container (%s) içindeki dosya siliniyor: %s\n", containerID, filePath)
+	return pouch.DeleteFile(containerID, filePath)
+}
+
+
+func CopyFileToContainer(containerID, localFilePath, containerTargetPath string) error {
+	fmt.Printf("📤 Container (%s) içine dosya kopyalanıyor: %s -> %s\n", containerID, localFilePath, containerTargetPath)
+	return pouch.CopyToContainer(containerID, localFilePath, containerTargetPath)
+}

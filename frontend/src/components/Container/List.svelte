@@ -2,8 +2,6 @@
   import { onMount } from "svelte";
   import axios from "axios";
   import Cookies from "js-cookie";
-
-  // Terminal component
   import Terminal from "./Cmd.svelte";
 
   const user = Cookies.get("token");
@@ -24,12 +22,16 @@
 
   let showModal = false;
   let activeContainerToken = "";
+  let path = "/home/";
+  // File management states
+  let fileStates: Record<string, string[]> = {};
+  let fileInputs: Record<string, File | null> = {};
 
   async function fetchContainers() {
     loading = true;
     try {
       const res = await axios.post(`${API}/api/container/list`, { user });
-      containers = res.data.data; // doğru kullanım
+      containers = res.data.data;
     } catch (err: any) {
       error = err.response?.data?.error || "Bir hata oluştu";
     } finally {
@@ -51,24 +53,89 @@
     await axios.post(`${API}/api/container/stop`, { token });
     await fetchContainers();
   }
+
   async function statusContainer(token: string) {
     await axios.post(`${API}/api/container/status`, { token });
     await fetchContainers();
   }
-
 
   function openTerminal(token: string) {
     activeContainerToken = token;
     showModal = true;
   }
 
-
   function closeModal() {
     showModal = false;
     activeContainerToken = "";
   }
 
-  onMount(fetchContainers);
+ 
+  async function uploadFile(token: string, file: File | null) {
+  if (!file) return;
+
+  const formData = new FormData();
+  formData.append("token", token); // container ID
+  formData.append("target",path); // hedef path
+  formData.append("user", user || ""); // user token
+  formData.append("file", file); // dosya
+
+  try {
+    await axios.post(`${API}/api/container/file/add`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data"
+      }
+    });
+
+    await fetchFiles(token);
+  } catch (err) {
+    console.error("Yükleme hatası:", err);
+  }
+}
+
+async function fetchFiles(token: string) {
+  try {
+    const res = await axios.post(`${API}/api/container/file/list`, {
+      token,
+      path,
+      user
+    });
+
+    if (res.data.status === "OK") {
+      const lines: string[] = res.data.data;
+      const files = lines
+        .filter(line => !line.startsWith("total"))
+        .map(line => {
+          const parts = line.trim().split(/\s+/);
+          return parts.slice(8).join(" "); 
+        });
+
+      fileStates[token] = files;
+    } else {
+      fileStates[token] = [];
+    }
+  } catch (err) {
+    console.error("Dosya listesi alınamadı:", err);
+    fileStates[token] = [];
+  }
+}
+
+  async function deleteFile(token: string, paths: string) {
+    await axios.post(`${API}/api/container/file/del`, {
+      token,
+      path: path+paths,
+      user
+    });
+    await fetchFiles(token);
+  }
+
+  function handleFileChange(token: string, file: File | null) {
+    fileInputs[token] = file;
+  }
+
+  onMount(async () => {
+    await fetchContainers();
+    await Promise.all(containers.map(c => fetchFiles(c.Token)));
+  });
 </script>
 
 {#if loading}
@@ -114,6 +181,42 @@
               class="bg-indigo-600 text-white px-3 py-1 rounded hover:bg-indigo-700"
             >Terminal Aç</button>
           </div>
+        </div>
+
+        <!-- File management section -->
+        <div class="mt-4 p-3 bg-gray-50 rounded border">
+          <h3 class="font-semibold mb-2">📁 Dosya Yönetimi</h3>
+
+          <div class="flex gap-2 mb-2">
+            <input
+              type="file"
+              on:change={(e) => handleFileChange(container.Token, e.target.files?.[0] || null)}
+            />
+            <button
+              class="bg-indigo-600 text-white px-3 py-1 rounded hover:bg-indigo-700"
+              on:click={() => uploadFile(container.Token, fileInputs[container.Token])}
+            >
+              Yükle
+            </button>
+          </div>
+
+          {#if fileStates[container.Token]?.length > 0}
+            <ul class="space-y-1">
+              {#each fileStates[container.Token] as file}
+                <li class="flex justify-between items-center border px-2 py-1 rounded text-sm">
+                  <span>{file}</span>
+                  <button
+                    on:click={() => deleteFile(container.Token, file)}
+                    class="bg-red-500 text-white px-2 py-0.5 rounded text-xs"
+                  >
+                    Sil
+                  </button>
+                </li>
+              {/each}
+            </ul>
+          {:else}
+            <p class="text-sm text-gray-500">Hiç dosya yok.</p>
+          {/if}
         </div>
       </li>
     {/each}

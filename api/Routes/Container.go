@@ -16,9 +16,9 @@ func Container(app fiber.Router) {
 	app.Post("/status", Handler.ContainerStatusHandler)
 	app.Post("/restart", Handler.ContainerRestartHandler)
 	app.Post("/log", Handler.ContainerLogsHandler)
-	app.Post("/file/add", Handler.ContainerRestartHandler)
-	app.Post("/file/del", Handler.ContainerRestartHandler)
-	app.Post("/file/list", Handler.ContainerRestartHandler)	
+	app.Post("/file/add", Handler.ContainerUploadFileHandler)
+	app.Post("/file/del", Handler.ContainerDeleteFileHandler)
+	app.Post("/file/list", Handler.ContainerListFilesHandler)	
 }
 
 /*

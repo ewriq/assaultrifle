@@ -22,7 +22,7 @@
 - Python App  
 - Golang App
 - Php
-
+- llm
 
 İşte [assaultrifle](https://github.com/ewriq/assaultrifle) projesi için eksiksiz ve kategorize edilmiş eksik/fırsat listesi:
 
