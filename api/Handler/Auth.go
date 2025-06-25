@@ -1,13 +1,12 @@
-
 package Handler
 
 import (
 	"assaultrifle/Database"
 	"assaultrifle/Form"
+	"assaultrifle/Utils"
 	"strings"
 
 	"github.com/gofiber/fiber/v2"
-
 )
 
 
@@ -31,7 +30,7 @@ func Login(c *fiber.Ctx) error {
 	}
 
 
-	token, err := Database.Login(reqbody.Email, reqbody.Password)
+	token, err := Database.Login(Utils.Encode(reqbody.Email) , Utils.Encode(reqbody.Password))
 	if err != nil {
 		return c.Status(fiber.StatusBadGateway).JSON(fiber.Map{
 			"status": "error",
@@ -66,7 +65,7 @@ func Register(c *fiber.Ctx) error {
 	}
 
 
-	success, token := Database.Register(reqbody.Email, reqbody.Password, reqbody.Username)
+	success, token := Database.Register(Utils.Encode(reqbody.Email), Utils.Encode(reqbody.Password), Utils.Encode(reqbody.Username))
 	if !success {
 		return c.Status(fiber.StatusBadGateway).JSON(fiber.Map{
 			"status": "error",

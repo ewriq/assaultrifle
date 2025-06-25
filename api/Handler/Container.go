@@ -4,7 +4,7 @@ import (
 	"assaultrifle/Container"
 	"assaultrifle/Database"
 	"assaultrifle/Form"
-
+	"assaultrifle/Utils"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -20,7 +20,7 @@ func ContainerAddHandler(c *fiber.Ctx) error {
 		})
 	}
 
-	success, token := Database.ContainerAdd(req.Name, req.Password, req.Port, req.User, req.Type)
+	success, token := Database.ContainerAdd(Utils.Encode(req.Name) , Utils.Encode(req.Password), Utils.Encode(req.Port), Utils.Encode(req.User), Utils.Encode(req.Type))
 	if success {
 		return c.JSON(fiber.Map{
 			"status":  "OK",
@@ -195,7 +195,7 @@ func ContainerLogsHandler(c *fiber.Ctx) error {
 	return c.JSON(fiber.Map{
 		"status":  "OK",
 		"message": "Container logları alındı",
-		"data": data,
+		"data": Utils.Encode(data),
 	})
 }
 

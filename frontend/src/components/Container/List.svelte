@@ -23,7 +23,6 @@
   let showModal = false;
   let activeContainerToken = "";
   let path = "/home/";
-  // File management states
   let fileStates: Record<string, string[]> = {};
   let fileInputs: Record<string, File | null> = {};
 
@@ -74,11 +73,10 @@
   if (!file) return;
 
   const formData = new FormData();
-  formData.append("token", token); // container ID
-  formData.append("target",path); // hedef path
-  formData.append("user", user || ""); // user token
-  formData.append("file", file); // dosya
-
+  formData.append("token", token); 
+  formData.append("target",path); 
+  formData.append("user", user || ""); 
+  formData.append("file", file); 
   try {
     await axios.post(`${API}/api/container/file/add`, formData, {
       headers: {
