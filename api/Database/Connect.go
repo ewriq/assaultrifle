@@ -2,6 +2,7 @@ package Database
 
 import (
 	"assaultrifle/Form"
+	"assaultrifle/Utils"
 	"fmt"
 
 	"gorm.io/driver/mysql"
@@ -11,7 +12,7 @@ import (
 var DB *gorm.DB
 
 func init() {
-	dsn := "root@tcp(localhost:3306)/auth?charset=utf8mb4&parseTime=True&loc=Local"
+	dsn := Utils.GetConfig("mysql", "connect") 
 	var err error
 	DB, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {

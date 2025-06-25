@@ -19,6 +19,7 @@ func CreateNodeContainer(name, img, port string) (string, error) {
 		Labels: map[string]string{
 			"type": "nodejs",
 		},
+		UserUIDGID: "1001:1001",
 	}
 
 	id, err := pouch.Create(opt)

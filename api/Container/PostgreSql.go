@@ -19,6 +19,7 @@ func CreatePostgresContainer(name, img, port, password string) (string, error) {
 		Labels: map[string]string{
 			"type": "postgres",
 		},
+		UserUIDGID: "1001:1001",
 	}
 
 	id, err := pouch.Create(opt)

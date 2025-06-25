@@ -39,6 +39,7 @@ func Initialize(app *fiber.App) {
 
 	auth := app.Group("/api/auth")
 	container := app.Group("/api/container")
+	admin := app.Group("/api/admin")
 
 
 	app.Get("/", Handler.Home)
@@ -48,6 +49,7 @@ func Initialize(app *fiber.App) {
 
 
 	Routes.Auth(auth)
+	Routes.Admin(admin)
 	Routes.Container(container)
 
 	app.Use(Middleware.Notfound)

@@ -20,6 +20,7 @@ func CreateUbuntuContainer(name, img, port string) (string, error) {
 			"type": "ubuntu",
 		},
 		EntryPoint: "/bin/bash",
+		UserUIDGID: "1001:1001",
 	}
 
 	id, err := pouch.Create(opt)

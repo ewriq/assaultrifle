@@ -19,6 +19,7 @@ func CreateMySQLContainer(name, img, port, password string) (string, error) {
 		Labels: map[string]string{
 			"type": "mysql",
 		},
+		UserUIDGID: "1001:1001",
 	}
 
 	id, err := pouch.Create(opt)

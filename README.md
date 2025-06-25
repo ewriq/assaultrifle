@@ -53,13 +53,5 @@
 
 ### Yarının Planları
 * Otomatik container temizliği yok (*)
-* IP / token bazlı şüpheli giriş kontrolü yok (*)
-* Email doğrulama mekanizması yok
-* Şifre sıfırlama yok (*)
-* Concurrency kontrolü yok
-* Graceful shutdown mekanizması yok (*)
-* .env.example eksik (*)
 * Status takibi (durum polling) 
-* Kullanıcı bilgisi güncelleme endpoint yok (*)
-* Tüm container'lar root olarak çalışıyor olabilir (*)
 * Pagination desteği yok 

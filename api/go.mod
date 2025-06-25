@@ -4,6 +4,7 @@ go 1.23.4
 
 require (
 	github.com/ewriq/pouch v0.0.0-20250624103717-e900f9ad21e7
+	github.com/go-ini/ini v1.67.0
 	github.com/goccy/go-json v0.10.5
 	github.com/gofiber/fiber/v2 v2.52.8
 	github.com/gofiber/helmet/v2 v2.2.26

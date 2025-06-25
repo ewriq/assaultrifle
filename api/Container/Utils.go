@@ -2,6 +2,8 @@ package Container
 
 import (
 	"fmt"
+	"os/exec"
+	"strings"
 
 	"github.com/ewriq/pouch"
 )
@@ -75,4 +77,28 @@ func DeleteContainerFile(containerID, filePath string) error {
 func CopyFileToContainer(containerID, localFilePath, containerTargetPath string) error {
 	fmt.Printf("📤 Container (%s) içine dosya kopyalanıyor: %s -> %s\n", containerID, localFilePath, containerTargetPath)
 	return pouch.CopyToContainer(containerID, localFilePath, containerTargetPath)
+}
+
+func ContainerStopAll() error {
+	cmd := exec.Command("docker", "ps", "-q")
+	output, err := cmd.Output()
+	if err != nil {
+		return fmt.Errorf("listeleme hatası: %w", err)
+	}
+
+	ids := strings.Fields(string(output))
+	if len(ids) == 0 {
+		fmt.Println("📦 Hiç çalışan container yok.")
+		return nil
+	}
+
+	args := append([]string{"stop"}, ids...)
+	stopCmd := exec.Command("docker", args...)
+	stopOutput, err := stopCmd.CombinedOutput()
+	if err != nil {
+		return fmt.Errorf("durdurma hatası: %v\n%s", err, stopOutput)
+	}
+
+	fmt.Println("📦 Tüm container'lar durduruldu.")
+	return nil
 }
