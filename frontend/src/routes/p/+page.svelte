@@ -2,13 +2,13 @@
   import { onMount } from "svelte";
   import { goto } from "$app/navigation";
   import Cookies from "js-cookie";
-  import axios from "axios";
-	import List from '../../components/Container/List.svelte';
-  import Add from '../../components/Container/Add.svelte';
+  import { fetchUser } from "$lib/user";
 
-  let user: any = null;
+  import List from "../../components/Container/List.svelte";
+  import Add from "../../components/Container/Add.svelte";
+
+  let user: { Username: string } | null = null;
   const token = Cookies.get("token");
-  const API = "http://localhost:3000";
 
   onMount(async () => {
     if (!token) {
@@ -17,15 +17,9 @@
     }
 
     try {
-      const res = await axios.post(`${API}/api/auth/user`, { token });
-
-      if (res.data.status === "OK") {
-        user = res.data.data[0];
-      } else {
-        goto("/login");
-      }
+      user = await fetchUser(token);
     } catch (e) {
-      console.error("Error fetching user data:", e);
+      console.error("Kullanıcı verisi alınamadı:", e);
       goto("/login");
     }
   });
@@ -33,13 +27,12 @@
 
 <main class="p-6 max-w-6xl mx-auto space-y-10">
   {#if user}
-  <h1>Welcome, {user.Username}!</h1>
-
+    <h1 class="text-2xl font-bold">Welcome, {user.Username}!</h1>
+    <Add />
+    <List />
   {:else}
-    <p>Loading user data...</p>
+    <p class="text-gray-600">Kullanıcı verisi yükleniyor...</p>
   {/if}
-  <Add />
-  <List />
 </main>
 
 <style>

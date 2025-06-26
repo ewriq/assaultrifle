@@ -1,90 +1,71 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
   import Cookies from "js-cookie";
-  import axios from "axios";
+  import { loginUser } from "$lib/login";
 
   let email = "";
   let password = "";
   let error: string = "";
+  let success: string = "";
 
-  const login = async () => {
-    const form = { email, password };
+  async function login() {
+    error = "";
+    success = "";
 
     try {
-      const response = await axios.post(
-        "http://localhost:3000/api/auth/login",
-        form,
-      );
-      if (response.data.status === "OK") {
-        const token = response.data.data;
-        Cookies.set("token", token);
-        error = "Başarılı! Yönlendiriliyorsunuz...";
-        setTimeout(() => goto("/p"), 3000);
-      } else {
-        error = "Email ya da parola hatalı";
-      }
-    } catch (err) {
-      console.error("Hata oluştu:", err);
-      error = "Sunucu hatası oluştu.";
+      const token = await loginUser(email, password);
+      Cookies.set("token", token);
+      success = "Başarılı! Yönlendiriliyorsunuz...";
+      setTimeout(() => goto("/p"), 2000);
+    } catch (err: any) {
+      error = err.message || "Bilinmeyen bir hata oluştu.";
     }
-  };
+  }
 </script>
 
-<main>
-  <div class="flex justify-center items-center">
-    <div
-      class="mb-1.5 w-full max-w-sm p-4 border-gray-200 rounded-lg shadow sm:p-6 md:p-8"
-    >
-      <form class="space-y-6" on:submit|preventDefault={login}>
-        <h5 class="text-xl font-medium text-gray-900">Login</h5>
+<main class="min-h-screen flex justify-center items-center bg-gray-100 p-6">
+  <div class="w-full max-w-sm bg-white p-6 rounded-lg shadow-md">
+    <h2 class="text-2xl font-bold mb-4 text-center">Giriş Yap</h2>
 
-        {#if error}
-          <div class="bg-green-100 text-green-700 p-4 rounded" role="alert">
-            <p class="font-bold">{error}</p>
-          </div>
-        {/if}
+    {#if error}
+      <div class="bg-red-100 text-red-700 p-3 mb-3 rounded">{error}</div>
+    {/if}
 
-        <div>
-          <label
-            for="email"
-            class="block mb-2 text-sm font-medium text-gray-900"
-          >
-            Your email
-          </label>
-          <input
-            type="email"
-            bind:value={email}
-            id="email"
-            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400"
-            placeholder="name@company.com"
-            required
-          />
-        </div>
+    {#if success}
+      <div class="bg-green-100 text-green-700 p-3 mb-3 rounded">{success}</div>
+    {/if}
 
-        <div>
-          <label
-            for="password"
-            class="block mb-2 text-sm font-medium text-gray-900"
-          >
-            Your password
-          </label>
-          <input
-            type="password"
-            bind:value={password}
-            id="password"
-            placeholder="••••••••"
-            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400"
-            required
-          />
-        </div>
+    <form class="space-y-4" on:submit|preventDefault={login}>
+      <div>
+        <label for="email" class="block text-sm font-medium text-gray-700">E-posta</label>
+        <input
+          id="email"
+          type="email"
+          bind:value={email}
+          required
+          class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring focus:ring-blue-200"
+          placeholder="ornek@mail.com"
+        />
+      </div>
 
-        <button
-          type="submit"
-          class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-        >
-          Login
-        </button>
-      </form>
-    </div>
+      <div>
+        <label for="password" class="block text-sm font-medium text-gray-700">Şifre</label>
+        <input
+          id="password"
+          type="password"
+          bind:value={password}
+          required
+          class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring focus:ring-blue-200"
+          placeholder="••••••••"
+        />
+      </div>
+
+      <button
+        type="submit"
+        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded"
+      >
+        Giriş Yap
+      </button>
+    </form>
   </div>
 </main>

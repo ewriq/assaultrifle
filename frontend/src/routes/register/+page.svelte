@@ -1,97 +1,84 @@
 <script lang="ts">
   import { goto } from '$app/navigation';
   import Cookies from 'js-cookie';
-  import axios from 'axios';
+  import { registerUser } from '$lib/register';
 
   let email = '';
   let password = '';
   let username = '';
-  let error: string = '';
+  let error = '';
+  let success = '';
 
-  const register = async () => {
-    const form = { email, password, username };
+  async function handleRegister() {
+    error = '';
+    success = '';
 
     try {
-      const response = await axios.post('http://localhost:3000/api/auth/register', form);
-
-      if (response.data.status === 'OK') {
-        const token = response.data.token;
-        Cookies.set('token', token);
-        error = 'Kayıt başarılı! Ana sayfaya yönlendiriliyorsunuz...';
-        setTimeout(() => goto('/'), 3000);
-      } else {
-        error = 'Bir hata oluştu. Lütfen bilgilerinizi kontrol edin.';
-      }
-    } catch (err) {
-      console.error('İstek hatası:', err);
-      error = 'Sunucuya bağlanılamadı.';
+      const token = await registerUser({ email, password, username });
+      Cookies.set('token', token);
+      success = 'Kayıt başarılı! Ana sayfaya yönlendiriliyorsunuz...';
+      setTimeout(() => goto('/'), 2000);
+    } catch (err: any) {
+      error = err.message || 'Bilinmeyen bir hata oluştu.';
     }
-  };
+  }
 </script>
 
-<main>
-  <div class="flex justify-center  items-center">
-    <div
-      class="mb-1.5 w-full max-w-sm p-4  border-gray-200 rounded-lg shadow sm:p-6 md:p-8 "
-    >
-      <form class="space-y-6" on:submit|preventDefault={register}>
-        <h5 class="text-xl font-medium text-gray-900  ">Register</h5>
+<main class="min-h-screen flex items-center justify-center bg-gray-100 px-4">
+  <div class="w-full max-w-sm bg-white p-6 rounded-lg shadow-md">
+    <h2 class="text-2xl font-bold mb-4 text-center">Kayıt Ol</h2>
 
-        {#if error}
-          <div class="bg-green-100 text-green-700 p-4 rounded" role="alert">
-            <p class="font-bold">{error}</p>
-          </div>
-        {/if}
+    {#if error}
+      <div class="bg-red-100 text-red-700 p-3 mb-3 rounded">{error}</div>
+    {/if}
 
-        <div>
-          <label for="username" class="block mb-2 text-sm font-medium text-gray-900  ">
-            Username
-          </label>
-          <input
-            type="text"
-            bind:value={username}
-            id="username"
-            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400  "
-            placeholder="company"
-            required
-          />
-        </div>
+    {#if success}
+      <div class="bg-green-100 text-green-700 p-3 mb-3 rounded">{success}</div>
+    {/if}
 
-        <div>
-          <label for="email" class="block mb-2 text-sm font-medium text-gray-900  ">
-            Email
-          </label>
-          <input
-            type="email"
-            bind:value={email}
-            id="email"
-            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400  "
-            placeholder="name@company.com"
-            required
-          />
-        </div>
+    <form on:submit|preventDefault={handleRegister} class="space-y-4">
+      <div>
+        <label for="username" class="block text-sm font-medium text-gray-700">Kullanıcı Adı</label>
+        <input
+          id="username"
+          type="text"
+          bind:value={username}
+          required
+          placeholder="örnekKullanici"
+          class="mt-1 w-full border border-gray-300 rounded px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring focus:ring-blue-200"
+        />
+      </div>
 
-        <div>
-          <label for="password" class="block mb-2 text-sm font-medium text-gray-900  ">
-            Password
-          </label>
-          <input
-            type="password"
-            bind:value={password}
-            id="password"
-            placeholder="••••••••"
-            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400  "
-            required
-          />
-        </div>
+      <div>
+        <label for="email" class="block text-sm font-medium text-gray-700">E-posta</label>
+        <input
+          id="email"
+          type="email"
+          bind:value={email}
+          required
+          placeholder="ornek@mail.com"
+          class="mt-1 w-full border border-gray-300 rounded px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring focus:ring-blue-200"
+        />
+      </div>
 
-        <button
-          type="submit"
-          class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-        >
-          Register
-        </button>
-      </form>
-    </div>
+      <div>
+        <label for="password" class="block text-sm font-medium text-gray-700">Şifre</label>
+        <input
+          id="password"
+          type="password"
+          bind:value={password}
+          required
+          placeholder="••••••••"
+          class="mt-1 w-full border border-gray-300 rounded px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring focus:ring-blue-200"
+        />
+      </div>
+
+      <button
+        type="submit"
+        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded"
+      >
+        Kayıt Ol
+      </button>
+    </form>
   </div>
 </main>
