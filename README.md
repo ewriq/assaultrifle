@@ -23,6 +23,55 @@
 - Golang App
 - Php
 - llm
+-alpine
+-ubuntu
+-debian
+-centos
+-fedora
+-busybox
+-archlinux
+-rockylinux
+-amazonlinux
+-opensuse
+-python
+-node
+-openjdk
+-golang
+-ruby
+-php
+-dotnet
+-rust
+-perl
+-swift
+-mysql
+-postgres
+-mariadb
+-mongo
+-redis
+-cassandra
+-neo4j
+-elasticsearch
+-oraclelinux
+-sqlite
+-nginx
+-httpd
+-traefik
+-haproxy
+-caddy
+-jenkins
+-gitlab-runner
+-circleci
+-buildkite
+-sonarqube
+-kubernetes
+-etcd
+-consul
+-vault
+-docker
+-rabbitmq
+-kafka
+-grafana
+-alpine/git
 
 İşte [assaultrifle](https://github.com/ewriq/assaultrifle) projesi için eksiksiz ve kategorize edilmiş eksik/fırsat listesi:
 
