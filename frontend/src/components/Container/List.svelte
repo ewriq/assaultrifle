@@ -30,7 +30,7 @@
     loading = true;
     try {
       const res = await axios.post(`${API}/api/container/list`, { user });
-      containers = res.data.data;
+      containers = res.data.data ?? [];
     } catch (err: any) {
       error = err.response?.data?.error || "Bir hata oluştu";
     } finally {
@@ -68,59 +68,56 @@
     activeContainerToken = "";
   }
 
- 
   async function uploadFile(token: string, file: File | null) {
-  if (!file) return;
+    if (!file) return;
 
-  const formData = new FormData();
-  formData.append("token", token); 
-  formData.append("target",path); 
-  formData.append("user", user || ""); 
-  formData.append("file", file); 
-  try {
-    await axios.post(`${API}/api/container/file/add`, formData, {
-      headers: {
-        "Content-Type": "multipart/form-data"
-      }
-    });
-
-    await fetchFiles(token);
-  } catch (err) {
-    console.error("Yükleme hatası:", err);
+    const formData = new FormData();
+    formData.append("token", token);
+    formData.append("target", path);
+    formData.append("user", user || "");
+    formData.append("file", file);
+    try {
+      await axios.post(`${API}/api/container/file/add`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data"
+        }
+      });
+      await fetchFiles(token);
+    } catch (err) {
+      console.error("Yükleme hatası:", err);
+    }
   }
-}
 
-async function fetchFiles(token: string) {
-  try {
-    const res = await axios.post(`${API}/api/container/file/list`, {
-      token,
-      path,
-      user
-    });
+  async function fetchFiles(token: string) {
+    try {
+      const res = await axios.post(`${API}/api/container/file/list`, {
+        token,
+        path,
+        user
+      });
 
-    if (res.data.status === "OK") {
-      const lines: string[] = res.data.data;
-      const files = lines
-        .filter(line => !line.startsWith("total"))
-        .map(line => {
-          const parts = line.trim().split(/\s+/);
-          return parts.slice(8).join(" "); 
-        });
-
-      fileStates[token] = files;
-    } else {
+      if (res.data.status === "OK") {
+        const lines: string[] = res.data.data ?? [];
+        const files = lines
+          .filter(line => !line.startsWith("total"))
+          .map(line => {
+            const parts = line.trim().split(/\s+/);
+            return parts.slice(8).join(" ");
+          });
+        fileStates[token] = files ?? [];
+      } else {
+        fileStates[token] = [];
+      }
+    } catch (err) {
+      console.error("Dosya listesi alınamadı:", err);
       fileStates[token] = [];
     }
-  } catch (err) {
-    console.error("Dosya listesi alınamadı:", err);
-    fileStates[token] = [];
   }
-}
 
   async function deleteFile(token: string, paths: string) {
     await axios.post(`${API}/api/container/file/del`, {
       token,
-      path: path+paths,
+      path: path + paths,
       user
     });
     await fetchFiles(token);
@@ -132,7 +129,9 @@ async function fetchFiles(token: string) {
 
   onMount(async () => {
     await fetchContainers();
-    await Promise.all(containers.map(c => fetchFiles(c.Token)));
+    for (const c of containers) {
+      await fetchFiles(c.Token);
+    }
   });
 </script>
 
@@ -154,34 +153,15 @@ async function fetchFiles(token: string) {
             <p class="text-sm text-gray-600">Tür: {container.Types}</p>
           </div>
           <div class="space-x-2 flex items-center">
-            <button
-              on:click={() => startContainer(container.Token)}
-              class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600"
-            >Başlat</button>
-
-            <button
-              on:click={() => stopContainer(container.Token)}
-              class="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600"
-            >Durdur</button>
-
-            <button
-              on:click={() => deleteContainer(container.Token)}
-              class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
-            >Sil</button>
-
-            <button
-              on:click={() => statusContainer(container.Token)}
-              class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
-            >Durum</button>
-
-            <button
-              on:click={() => openTerminal(container.Token)}
-              class="bg-indigo-600 text-white px-3 py-1 rounded hover:bg-indigo-700"
-            >Terminal Aç</button>
+            <button on:click={() => startContainer(container.Token)} class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600">Başlat</button>
+            <button on:click={() => stopContainer(container.Token)} class="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600">Durdur</button>
+            <button on:click={() => deleteContainer(container.Token)} class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">Sil</button>
+            <button on:click={() => statusContainer(container.Token)} class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">Durum</button>
+            <button on:click={() => openTerminal(container.Token)} class="bg-indigo-600 text-white px-3 py-1 rounded hover:bg-indigo-700">Terminal Aç</button>
           </div>
         </div>
 
-        <!-- File management section -->
+        <!-- Dosya Yönetimi -->
         <div class="mt-4 p-3 bg-gray-50 rounded border">
           <h3 class="font-semibold mb-2">📁 Dosya Yönetimi</h3>
 
@@ -198,9 +178,9 @@ async function fetchFiles(token: string) {
             </button>
           </div>
 
-          {#if fileStates[container.Token]?.length > 0}
+          {#if Array.isArray(fileStates[container.Token]) && fileStates[container.Token].length > 0}
             <ul class="space-y-1">
-              {#each fileStates[container.Token] as file}
+              {#each fileStates[container.Token] ?? [] as file}
                 <li class="flex justify-between items-center border px-2 py-1 rounded text-sm">
                   <span>{file}</span>
                   <button
@@ -222,21 +202,9 @@ async function fetchFiles(token: string) {
 {/if}
 
 {#if showModal}
-  <div
-    class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50"
-    on:click={closeModal}
-  >
-    <div
-      class="bg-white p-6 rounded-lg max-w-4xl w-full"
-      on:click|stopPropagation
-    >
-      <button
-        class="mb-4 px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
-        on:click={closeModal}
-      >
-        Kapat
-      </button>
-
+  <div class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50" on:click={closeModal}>
+    <div class="bg-white p-6 rounded-lg max-w-4xl w-full" on:click|stopPropagation>
+      <button class="mb-4 px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600" on:click={closeModal}>Kapat</button>
       <Terminal containerId={activeContainerToken} />
     </div>
   </div>

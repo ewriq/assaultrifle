@@ -3,6 +3,7 @@ package Handler
 import (
 	"assaultrifle/Container"
 	"assaultrifle/Database"
+	"assaultrifle/Error"
 	"assaultrifle/Form"
 
 	"github.com/gofiber/fiber/v2"
@@ -12,98 +13,61 @@ func Shutdown(c *fiber.Ctx) error {
 	var reqbody Form.UserInfo
 
 	if err := c.BodyParser(&reqbody); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"status": "error",
-			"error":  "Geçersiz giriş",
-		})
+		return Error.StatusBadRequest(c)
 	}
 
 	perm, _ := Database.ValidateAdminAccess(reqbody.Token)
 	if perm == "user" {
-		return c.JSON(fiber.Map{
-			"status":  "error",
-			"message": "Kullanıcı admin yetkisine sahip değil",
-		})
+		return Error.InvalidPerm(c)
 	}
 
 
 	stop := Container.ContainerStopAll()
 	if stop != nil {
-		return c.JSON(fiber.Map{
-			"status":  "error",
-			"message": "Durdurulamadı",
-		})
+		return 	Error.CustomError(c, "Konteynerler durdurulamadı.")
 	}
 	
-	return c.JSON(fiber.Map{
-		"status":  "OK",
-		"message": "Konteynerlerin tümü durduruldu",
-	})
+	return Error.CustomSuccess(c, "Tüm konteynerler başarıyla durduruldu.")
 }
 
 func DeleteAllContainer(c *fiber.Ctx) error {
 	var reqbody Form.UserInfo
 
 	if err := c.BodyParser(&reqbody); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"status": "error",
-			"error":  "Geçersiz giriş",
-		})
+		return Error.StatusBadRequest(c)
 	}
 
 	perm, _ := Database.ValidateAdminAccess(reqbody.Token)
 	if perm == "user" {
-		return c.JSON(fiber.Map{
-			"status":  "error",
-			"message": "Kullanıcı admin yetkisine sahip değil",
-		})
+		return Error.InvalidPerm(c)
 	}
 
 
 	del := Container.DeleteAllContainer()
 	if del != nil {
-		return c.JSON(fiber.Map{
-			"status":  "error",
-			"message": "Silinemedi",
-		})
+		return 	Error.CustomError(c, "Konteynerler silinemedi.")
 	}
 	
-	return c.JSON(fiber.Map{
-		"status":  "OK",
-		"message": "Konteynerlerin tümü silindi",
-	})
+	return Error.CustomSuccess(c, "Tüm konteynerler başarıyla silindi.")
 }
 
 func ListAllContainer(c *fiber.Ctx) error {
 	var reqbody Form.UserInfo
 
 	if err := c.BodyParser(&reqbody); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"status": "error",
-			"error":  "Geçersiz giriş",
-		})
+		return Error.StatusBadRequest(c)
 	}
 
 	perm, _ := Database.ValidateAdminAccess(reqbody.Token)
 	if perm == "user" {
-		return c.JSON(fiber.Map{
-			"status":  "error",
-			"message": "Kullanıcı admin yetkisine sahip değil",
-		})
+		return Error.InvalidPerm(c)
 	}
 
 
 	data, err := Database.ContainerListAll()
 	if err != nil {
-		return c.JSON(fiber.Map{
-			"status":  "error",
-			"message": "Listelenemedi",
-		})
+		return 	Error.CustomError(c, "Konteynerler listelenemedi.")
 	}
 	
-	return c.JSON(fiber.Map{
-		"status":  "OK",
-		"message": "Konteynerlerin tümü listelendi",
-		"data": data,
-	})
+	return Error.CustomSuccessContainer(c,data,"Konteynerlerin tümü listelendi.")
 }

@@ -87,3 +87,6 @@
 
 ### Yarının Planları
 * Pagination desteği yok 
+* Wste commandları ayır 
+* Error handler 
+* UID token 

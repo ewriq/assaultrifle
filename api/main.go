@@ -4,8 +4,7 @@ import (
 	"assaultrifle/Handler"
 	"assaultrifle/Middleware"
 	"assaultrifle/Routes"
-	"assaultrifle/Utils"
-	"fmt"
+
 
 	"github.com/goccy/go-json"
 	"github.com/gofiber/fiber/v2"
@@ -19,11 +18,7 @@ func main() {
 		JSONDecoder: json.Unmarshal,
 	})
 
-	data := Utils.Encode("sa")
-	datas,err := Utils.Decode(data)
-	if err == nil {
-		fmt.Println(datas)
-	}
+
 	Initialize(app)
 
 	app.Listen(":3000")

@@ -20,7 +20,7 @@
       const res = await axios.post(`${API}/api/auth/user`, { token });
 
       if (res.data.status === "OK") {
-        user = res.data.data;
+        user = res.data.data[0];
       } else {
         goto("/login");
       }
@@ -33,7 +33,7 @@
 
 <main class="p-6 max-w-6xl mx-auto space-y-10">
   {#if user}
-  <h1>Welcome, {atob(user.Email)}!</h1>
+  <h1>Welcome, {user.Username}!</h1>
 
   {:else}
     <p>Loading user data...</p>

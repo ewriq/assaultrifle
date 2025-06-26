@@ -3,8 +3,9 @@ package Handler
 import (
 	"assaultrifle/Container"
 	"assaultrifle/Database"
+	"assaultrifle/Error"
 	"assaultrifle/Form"
-	"assaultrifle/Utils"
+	
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -14,25 +15,15 @@ func ContainerAddHandler(c *fiber.Ctx) error {
 	var req Form.ContainerAddRequest
 
 	if err := c.BodyParser(&req); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"status": "error",
-			"error":  "Geçersiz giriş",
-		})
+		return Error.StatusBadRequest(c)
 	}
 
-	success, token := Database.ContainerAdd(Utils.Encode(req.Name) , Utils.Encode(req.Password), Utils.Encode(req.Port), Utils.Encode(req.User), Utils.Encode(req.Type))
+	success, _ := Database.ContainerAdd(req.Name , req.Password, req.Port, req.User,req.Type)
 	if success {
-		return c.JSON(fiber.Map{
-			"status":  "OK",
-			"message": "Container oluşturuldu",
-			"token":   token,
-		})
+		return Error.CustomSuccess(c,"Container oluşturuldu")
 	}
 
-	return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-		"status": "error",
-		"error":  "Container oluşturulamadı",
-	})
+	return Error.CustomError(c, "Container oluşturulamadı")
 }
 
 
@@ -42,26 +33,15 @@ func ContainerListMyHandler(c *fiber.Ctx) error {
 	}
 
 	if err := c.BodyParser(&body); err != nil || body.User == "" {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"status": "error",
-			"error":  "Kullanıcı adı eksik",
-		})
+		return Error.CustomError(c,  "Kullanıcı adı eksik")
 	}
-
 
 	container, err := Database.ContainerListMy(body.User)
 	if err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"status": "error",
-			"error":  err.Error(),
-		})
+		return Error.CustomError(c,err.Error())
 	}
 
-
-	return c.JSON(fiber.Map{
-		"status": "OK",
-		"data":   container,
-	})
+	return Error.CustomSuccessContainer(c, container, "Başarıyla konteynerler listelendi.")
 }
 
 func ContainerListAllHandler(c *fiber.Ctx) error {
@@ -70,26 +50,15 @@ func ContainerListAllHandler(c *fiber.Ctx) error {
 	}
 
 	if err := c.BodyParser(&body); err != nil || body.User == "" {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"status": "error",
-			"error":  "Kullanıcı adı eksik",
-		})
+		return Error.CustomError(c,  "Kullanıcı tokeni eksik")
 	}
-
 
 	containers, err := Database.ContainerListAll()
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"status": "error",
-			"error":  err.Error(),
-		})
+		return Error.CustomError(c, err.Error())
 	}
 
-
-	return c.JSON(fiber.Map{
-		"status": "OK",
-		"data":   containers,
-	})
+	return Error.CustomSuccessContainer(c, containers, "Başarıyla konteynerler listelendi.")
 }
 
 
@@ -99,25 +68,15 @@ func ContainerDeleteHandler(c *fiber.Ctx) error {
 	}
 
 	if err := c.BodyParser(&body); err != nil || body.Token == "" {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"status": "error",
-			"error":  "Token eksik",
-		})
+		return Error.CustomError(c,"Token eksik")
 	}
 
 	success, _ := Database.ContainerDelete(body.Token)
 	if success {
-		return c.JSON(fiber.Map{
-			"status":  "OK",
-			"message": "Container silindi",
-		})
+		return Error.CustomSuccess(c,"Container silindi" )
 	}
 
-
-	return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-		"status": "error",
-		"error":  "Container silinemedi",
-	})
+	return Error.CustomError(c, "Container silinemedi")
 }
 
 
@@ -127,23 +86,14 @@ func ContainerStartHandler(c *fiber.Ctx) error {
 	}
 
 	if err := c.BodyParser(&body); err != nil || body.Token == "" {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"status": "error",
-			"error":  "Token eksik",
-		})
+		return Error.CustomError(c,"Token eksik")
 	}
 
 	if err := Container.StartContainer(body.Token); err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"status": "error",
-			"error":  "Container başlatılamadı",
-		})
+		return Error.CustomError(c, "Container başlatılamadı")
 	}
 
-	return c.JSON(fiber.Map{
-		"status":  "OK",
-		"message": "Container başlatıldı",
-	})
+	return Error.CustomSuccess(c,"Container başltatıldı" )
 }
 
 func ContainerRestartHandler(c *fiber.Ctx) error {
@@ -152,23 +102,14 @@ func ContainerRestartHandler(c *fiber.Ctx) error {
 	}
 
 	if err := c.BodyParser(&body); err != nil || body.Token == "" {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"status": "error",
-			"error":  "Token eksik",
-		})
+		return Error.CustomError(c,"Token eksik")
 	}
 
 	if err := Container.RestartContainer(body.Token); err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"status": "error",
-			"error":  "Container başlatılamadı",
-		})
+		return Error.CustomError(c, "Container başlatılamadı")
 	}
 
-	return c.JSON(fiber.Map{
-		"status":  "OK",
-		"message": "Container başlatıldı",
-	})
+	return Error.CustomSuccess(c,"Container başltatıldı" )
 }
 
 
@@ -178,25 +119,15 @@ func ContainerLogsHandler(c *fiber.Ctx) error {
 	}
 
 	if err := c.BodyParser(&body); err != nil || body.Token == "" {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"status": "error",
-			"error":  "Token eksik",
-		})
+		return Error.CustomError(c,"Token eksik")
 	}
 
 	 data, err := Container.GetContainerLogs(body.Token)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"status": "error",
-			"error":  "Container logları alınamadı",
-		})
+		return Error.CustomError(c, "Container logları alınamadı")
 	}
 
-	return c.JSON(fiber.Map{
-		"status":  "OK",
-		"message": "Container logları alındı",
-		"data": Utils.Encode(data),
-	})
+	return Error.CustomSuccessContainerLog(c,data,"Container logları alındı")
 }
 
 func ContainerStopHandler(c *fiber.Ctx) error {
@@ -205,24 +136,15 @@ func ContainerStopHandler(c *fiber.Ctx) error {
 	}
 	
 	if err := c.BodyParser(&body); err != nil || body.Token == "" {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"status": "error",
-			"error":  "Token eksik",
-		})
+		
 	}
 
 	if err := Container.StopContainer(body.Token); err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"status": "error",
-			"error":  "Container durdurulamadı",
-		})
+		return Error.CustomError(c, "Container durdurulamadı")
 	}
 
 
-	return c.JSON(fiber.Map{
-		"status":  "OK",
-		"message": "Container durdu",
-	})
+	return Error.CustomSuccess(c,"Container durdu")
 }
 
 
@@ -232,23 +154,13 @@ func ContainerStatusHandler(c *fiber.Ctx) error {
 	}
 
 	if err := c.BodyParser(&body); err != nil || body.Token == "" {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"status": "error",
-			"error":  "Token eksik",
-		})
+		return Error.CustomError(c,"Token eksik")
 	}
 
 	data, err := Container.GetContainerStatus(body.Token)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"status": "error",
-			"error":  "Veri alınamadı",
-		})
+		return Error.CustomError(c,"Veri alınamadı")
 	}
 
-
-	return c.JSON(fiber.Map{
-		"status": "OK",
-		"data":   data,
-	})
+	return Error.CustomSuccessStatus(c, data, "Anlık durum listelendi.")
 }

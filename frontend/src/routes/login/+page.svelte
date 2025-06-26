@@ -16,10 +16,10 @@
         form,
       );
       if (response.data.status === "OK") {
-        const token = response.data.token;
+        const token = response.data.data;
         Cookies.set("token", token);
         error = "Başarılı! Yönlendiriliyorsunuz...";
-        setTimeout(() => goto("/panel"), 3000);
+        setTimeout(() => goto("/p"), 3000);
       } else {
         error = "Email ya da parola hatalı";
       }

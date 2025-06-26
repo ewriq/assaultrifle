@@ -2,8 +2,8 @@ package Handler
 
 import (
 	"assaultrifle/Database"
+	"assaultrifle/Error"
 	"assaultrifle/Form"
-	"assaultrifle/Utils"
 	"strings"
 
 	"github.com/gofiber/fiber/v2"
@@ -15,35 +15,22 @@ func Login(c *fiber.Ctx) error {
 
 
 	if err := c.BodyParser(&reqbody); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"status": "error",
-			"error":  "Geçersiz giriş",
-		})
+		return Error.StatusBadRequest(c)
 	}
 
 
 	if !isValidEmail(reqbody.Email) || !isPasswordValid(reqbody.Password) {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"status": "error",
-			"error":  "Geçersiz e-posta veya şifre formatı",
-		})
+		return Error.CustomError(c	,"Geçersiz e-posta veya şifre formatı")
 	}
 
 
-	token, err := Database.Login(Utils.Encode(reqbody.Email) , Utils.Encode(reqbody.Password))
+	token, err := Database.Login(reqbody.Email , reqbody.Password)
 	if err != nil {
-		return c.Status(fiber.StatusBadGateway).JSON(fiber.Map{
-			"status": "error",
-			"error":  err.Error(),
-		})
+		return Error.CustomError(c	,err.Error())
 	}
 
 
-	return c.JSON(fiber.Map{
-		"status":  "OK",
-		"message": "Kullanıcı başarıyla giriş yaptı",
-		"token":   token,
-	})
+	return Error.CustomSuccessAuth(c,token,"Kullanıcı başarıyla giriş yaptı")
 }
 
 
@@ -51,58 +38,36 @@ func Register(c *fiber.Ctx) error {
 	var reqbody Form.UserBody
 
 	if err := c.BodyParser(&reqbody); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"status": "error",
-			"error":  "Geçersiz giriş",
-		})
+		return Error.StatusBadRequest(c)
 	}
 
 	if !isValidEmail(reqbody.Email) || !isPasswordValid(reqbody.Password) {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"status": "error",
-			"error":  "Geçersiz e-posta veya şifre formatı",
-		})
+		return Error.CustomError(c	,"Geçersiz e-posta veya şifre formatı")
 	}
 
 
-	success, token := Database.Register(Utils.Encode(reqbody.Email), Utils.Encode(reqbody.Password), Utils.Encode(reqbody.Username))
+	success, token := Database.Register(reqbody.Email, reqbody.Password, reqbody.Username)
 	if !success {
-		return c.Status(fiber.StatusBadGateway).JSON(fiber.Map{
-			"status": "error",
-			"error":  "Kayıt başarısız",
-		})
+		return Error.CustomError(c	, "Kayıt başarısız")
 	}
 
 
-	return c.JSON(fiber.Map{
-		"status":  "OK",
-		"message": "Kullanıcı başarıyla kaydedildi",
-		"token":   token,
-	})
+	return Error.CustomSuccessAuth(c,token,"Kullanıcı başarıyla kaydedildi")
 }
 
 func User(c *fiber.Ctx) error {
 	var reqbody Form.UserInfo
 	if err := c.BodyParser(&reqbody); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"status": "error",
-			"error":  "Geçersiz giriş",
-		})
+		return Error.StatusBadRequest(c)
 	}
 
 
 	user, err := Database.Users(reqbody.Token)
 	if err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"status": "error",
-			"error":  "Kullanıcı bulunamadı",
-		})
+		return Error.CustomError(c	,"Kullanıcı bulunamadı")
 	}
 
-	return c.JSON(fiber.Map{
-		"status": "OK",
-		"data":   user,
-	})
+	return Error.CustomSuccessUser(c, []Form.User{user},	"Kullanıcı bilgileri başarıyla çekildi.")
 }
 
 
