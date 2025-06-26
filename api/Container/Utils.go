@@ -102,3 +102,12 @@ func ContainerStopAll() error {
 	fmt.Println("📦 Tüm container'lar durduruldu.")
 	return nil
 }
+
+
+func DeleteAllContainer()  error {
+	err := DeleteContainer("$(docker ps -aq)")
+	if err != nil {
+		return err
+	}
+	return err
+}

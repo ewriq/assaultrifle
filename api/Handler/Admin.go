@@ -40,3 +40,70 @@ func Shutdown(c *fiber.Ctx) error {
 		"message": "Konteynerlerin tümü durduruldu",
 	})
 }
+
+func DeleteAllContainer(c *fiber.Ctx) error {
+	var reqbody Form.UserInfo
+
+	if err := c.BodyParser(&reqbody); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"status": "error",
+			"error":  "Geçersiz giriş",
+		})
+	}
+
+	perm, _ := Database.ValidateAdminAccess(reqbody.Token)
+	if perm == "user" {
+		return c.JSON(fiber.Map{
+			"status":  "error",
+			"message": "Kullanıcı admin yetkisine sahip değil",
+		})
+	}
+
+
+	del := Container.DeleteAllContainer()
+	if del != nil {
+		return c.JSON(fiber.Map{
+			"status":  "error",
+			"message": "Silinemedi",
+		})
+	}
+	
+	return c.JSON(fiber.Map{
+		"status":  "OK",
+		"message": "Konteynerlerin tümü silindi",
+	})
+}
+
+func ListAllContainer(c *fiber.Ctx) error {
+	var reqbody Form.UserInfo
+
+	if err := c.BodyParser(&reqbody); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"status": "error",
+			"error":  "Geçersiz giriş",
+		})
+	}
+
+	perm, _ := Database.ValidateAdminAccess(reqbody.Token)
+	if perm == "user" {
+		return c.JSON(fiber.Map{
+			"status":  "error",
+			"message": "Kullanıcı admin yetkisine sahip değil",
+		})
+	}
+
+
+	data, err := Database.ContainerListAll()
+	if err != nil {
+		return c.JSON(fiber.Map{
+			"status":  "error",
+			"message": "Listelenemedi",
+		})
+	}
+	
+	return c.JSON(fiber.Map{
+		"status":  "OK",
+		"message": "Konteynerlerin tümü listelendi",
+		"data": data,
+	})
+}
