@@ -5,9 +5,7 @@
   export let token: string;
   const dispatch = createEventDispatcher();
 
-  function close() {
-    dispatch("close");
-  }
+  const close = () => dispatch("close");
 </script>
 
 <div
@@ -15,13 +13,15 @@
   on:click={close}
 >
   <div class="bg-white p-6 rounded-lg max-w-4xl w-full" on:click|stopPropagation>
-    <button
-      class="mb-4 px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
-      on:click={close}
-    >
-      Kapat
-    </button>
-
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-lg font-bold">Terminal</h2>
+      <button
+        class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+        on:click={close}
+      >
+        Kapat
+      </button>
+    </div>
     <Terminal containerId={token} />
   </div>
 </div>
