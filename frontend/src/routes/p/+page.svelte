@@ -4,8 +4,8 @@
   import Cookies from "js-cookie";
   import { fetchUser } from "$lib/auht/user";
 
-  import List from "../../components/Container/List.svelte";
-  import Add from "../../components/Container/Add.svelte";
+  import List from "../../components/container/List.svelte";
+  import Add from "../../components/container/Add.svelte";
 
   let user: { Username: string } | null = null;
   const token = Cookies.get("token");
