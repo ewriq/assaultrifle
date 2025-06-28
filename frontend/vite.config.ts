@@ -1,9 +1,9 @@
-import v3css from '@v3css/vite';
+import tailwindcss from '@tailwindcss/vite';
 import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vite';
 
 export default defineConfig({
-	plugins: [v3css(), sveltekit()],
+	plugins: [tailwindcss(), sveltekit()],
 	test: {
 		projects: [
 			{
