@@ -2,13 +2,11 @@
   import { onMount } from "svelte";
   import { goto } from "$app/navigation";
   import Cookies from "js-cookie";
-  import { fetchUser } from "$lib/auht/user";
+  import axios from "axios";
 
-  import List from "../../components/container/List.svelte";
-  import Add from "../../components/container/Add.svelte";
-
-  let user: { Username: string } | null = null;
+  let user: any = null;
   const token = Cookies.get("token");
+  const API = "http://localhost:3000";
 
   onMount(async () => {
     if (!token) {
@@ -17,9 +15,15 @@
     }
 
     try {
-      user = await fetchUser(token);
+      const res = await axios.post(`${API}/api/auth/user`, { token });
+
+      if (res.data.status === "OK") {
+        user = res.data.data;
+      } else {
+        goto("/login");
+      }
     } catch (e) {
-      console.error("Kullanıcı verisi alınamadı:", e);
+      console.error("Error fetching user data:", e);
       goto("/login");
     }
   });
