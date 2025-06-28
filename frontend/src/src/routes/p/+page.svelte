@@ -3,6 +3,8 @@
   import { goto } from "$app/navigation";
   import Cookies from "js-cookie";
   import axios from "axios";
+    import List from "$lib/components/container/List.svelte";
+    import Add from "../../lib/components/container/Add.svelte";
 
   let user: any = null;
   const token = Cookies.get("token");
