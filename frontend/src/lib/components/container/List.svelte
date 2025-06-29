@@ -25,8 +25,7 @@
   <ul class="space-y-2">
     {#each containers as c}
       <li class="border p-3 rounded bg-white shadow">
-        <strong>{c.Name}</strong> — Port: {c.Port} — Tür: {c.Types}
-        <a href="/p/{c.Token}">sa</a>
+        <strong><a class="text-blue-400" href="/p/{c.Token}">{c.Name}</a></strong> — Port: {c.Port} — Tür: {c.Types}
       </li>
     {/each}
   </ul>
