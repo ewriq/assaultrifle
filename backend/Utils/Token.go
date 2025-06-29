@@ -1,17 +1,19 @@
 package Utils
 
 import (
+	"encoding/base64"
+	"fmt"
 	"math/rand"
-	"time"
+
 )
 
-func Token(length int) string {
-	rand.Seed(time.Now().UnixNano())
-
-	const letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-	result := make([]byte, length)
-	for i := range result {
-		result[i] = letters[rand.Intn(len(letters))]
+func Token(length int) (string, error) {
+	bytes := make([]byte, 16) // 128-bit UID
+	_, err := rand.Read(bytes)
+	if err != nil {
+		return "err", fmt.Errorf("rastgele UID üretilemedi: %v", err)
 	}
-	return string(result)
+
+	return base64.URLEncoding.EncodeToString(bytes), nil
+
 }

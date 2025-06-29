@@ -21,7 +21,11 @@ func Register(email, password, username string) (bool, string) {
 		return false, ""
 	}
 
-	token := Utils.Token(10)
+	token, _:= Utils.Token(10)
+	if (token == "err") {
+		return false, ""
+	}
+	
 	user := Form.User{
 		Username: username,
 		Password: password,
