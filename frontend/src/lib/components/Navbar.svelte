@@ -8,4 +8,3 @@
         <a href="/login" class="text-lg hover:text-blue-500">Login</a>
     </nav>
 </header>
- 

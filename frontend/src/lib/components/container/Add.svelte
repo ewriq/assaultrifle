@@ -38,22 +38,33 @@
       },
       () => {
         loading = false;
-      }
+      },
     );
   }
 </script>
 
-<button class="bg-blue-600 text-white px-4 py-2 rounded" on:click={() => (open = true)}>
+<button
+  class="bg-blue-600 text-white px-4 py-2 rounded"
+  on:click={() => (open = true)}
+>
   Yeni Container
 </button>
 
 {#if open}
   <div class="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg w-full max-w-md p-6 relative">
-      <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Yeni Container</h2>
+    <div
+      class="bg-white dark:bg-gray-800 rounded-lg shadow-lg w-full max-w-md p-6 relative"
+    >
+      <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+        Yeni Container
+      </h2>
 
       {#if message}
-        <p class="mb-3 text-sm {message.startsWith('Container') ? 'text-green-600' : 'text-red-500'}">
+        <p
+          class="mb-3 text-sm {message.startsWith('Container')
+            ? 'text-green-600'
+            : 'text-red-500'}"
+        >
           {message}
         </p>
       {/if}
@@ -61,22 +72,39 @@
       <div class="space-y-3">
         <div>
           <label class="text-sm font-medium block mb-1">İsim</label>
-          <input class="w-full p-2 border rounded" bind:value={name} placeholder="örnek_db" />
+          <input
+            class="w-full p-2 border rounded"
+            bind:value={name}
+            placeholder="örnek_db"
+          />
         </div>
 
         <div>
           <label class="text-sm font-medium block mb-1">Şifre</label>
-          <input class="w-full p-2 border rounded" type="password" bind:value={password} placeholder="root" />
+          <input
+            class="w-full p-2 border rounded"
+            type="password"
+            bind:value={password}
+            placeholder="root"
+          />
         </div>
 
         <div>
           <label class="text-sm font-medium block mb-1">Port</label>
-          <input class="w-full p-2 border rounded" bind:value={port} placeholder="3306" />
+          <input
+            class="w-full p-2 border rounded"
+            bind:value={port}
+            placeholder="3306"
+          />
         </div>
 
         <div>
           <label class="text-sm font-medium block mb-1">Veritabanı Türü</label>
-          <input class="w-full p-2 border rounded" bind:value={type} placeholder="MySql / PostgreSql" />
+          <input
+            class="w-full p-2 border rounded"
+            bind:value={type}
+            placeholder="MySql / PostgreSql"
+          />
         </div>
       </div>
 
@@ -96,7 +124,10 @@
         </button>
       </div>
 
-      <button class="absolute top-2 right-3 text-gray-400 hover:text-gray-600" on:click={() => (open = false)}>
+      <button
+        class="absolute top-2 right-3 text-gray-400 hover:text-gray-600"
+        on:click={() => (open = false)}
+      >
         ✕
       </button>
     </div>
