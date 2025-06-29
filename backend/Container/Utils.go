@@ -47,16 +47,16 @@ func RestartContainer(id string) error {
 
 
 func GetContainerLogs(id string) (string, error) {
-	fmt.Println("📄 Container logları alınıyor...")
+    fmt.Println("📄 Container logları alınıyor...")
 
-	logs, err := pouch.Logs(id)
-	if err != nil {
-		return "", fmt.Errorf("log alınamadı: %v", err)
-	}
+    logs, err := pouch.Logs(id)
+    if err != nil {
+        return "", fmt.Errorf("log alınamadı: %v", err)
+    }
 
-	return logs, nil
+
+    return logs, nil
 }
-
 func ListContainerFiles(containerID, containerPath string) ([]string, error) {
 	fmt.Printf("📂 Container (%s) içindeki dosyalar listeleniyor: %s\n", containerID, containerPath)
 	

@@ -21,7 +21,7 @@ export async function fetchAllContainers(): Promise<FetchResult> {
   }
 
   try {
-    const res = await axios.post("http://localhost:3000/api/container/listmy", {
+    const res = await axios.post("http://localhost:3000/api/container/list", {
       user: token,
     });
 

@@ -11,7 +11,7 @@
       password,
       () => {
         error = "Başarılı! Yönlendiriliyorsunuz...";
-        setTimeout(() => location.href = "/me", 3000);
+        setTimeout(() => location.href = "/p", 3000);
       },
       (errMsg) => {
         error = errMsg;

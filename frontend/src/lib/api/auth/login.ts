@@ -13,7 +13,7 @@ export async function loginUser(
     const response = await axios.post("http://localhost:3000/api/auth/login", form);
 
     if (response.data.status === "OK") {
-      Cookies.set("token", response.data.token);
+      Cookies.set("token", response.data.data);
       onSuccess();
     } else {
       onError("Email ya da parola hatalı");

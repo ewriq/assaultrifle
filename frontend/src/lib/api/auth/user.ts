@@ -1,29 +1,21 @@
 import axios from "axios";
-import Cookies from "js-cookie";
+import { goto } from "$app/navigation";
 
 const API = "http://localhost:3000";
 
-export async function getUser(
-  onSuccess: (user: any) => void,
-  onFailure: () => void
-) {
-  const token = Cookies.get("token");
-
-  if (!token) {
-    onFailure();
-    return;
-  }
-
+export async function getUser(token: string): Promise<any | null> {
   try {
     const res = await axios.post(`${API}/api/auth/user`, { token });
 
     if (res.data.status === "OK") {
-      onSuccess(res.data.data);
+      return res.data.data;
     } else {
-      onFailure();
+      goto("/login");
+      return null;
     }
-  } catch (err) {
-    console.error("Kullanıcı verisi alınamadı:", err);
-    onFailure();
+  } catch (e) {
+    console.error("Kullanıcı alınamadı:", e);
+    goto("/login");
+    return null;
   }
 }
