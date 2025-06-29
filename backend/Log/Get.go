@@ -45,7 +45,7 @@ func GetLog(date string) ([]LogEntry, error) {
 	return logs, nil
 }
 
-func Log(date string) (string, error) {
+func Get(date string) (string, error) {
 	entries, err := GetLog(date)
 	if err != nil {
 		return "", err
