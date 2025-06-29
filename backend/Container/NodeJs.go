@@ -1,18 +1,21 @@
 package Container
 
 import (
+	"assaultrifle/Log"
 	"fmt"
 
 	"github.com/ewriq/pouch"
 )
 
 func CreateNodeContainer(name, img, port string) (string, error) {
-	fmt.Println("📦 Node.js container oluşturuluyor...")
-
+	Log.Set("📦 Node.js container oluşturuluyor...")
+	
 	opt := pouch.CreateOptions{
-		Name:  name,
-		Image: img,
-		Port:  port,
+		Name:        name,
+		Image:       img,
+		Port:        port,
+		MemoryLimit: "512m",   
+		CPULimit:    0.3,      
 		EnvVars: map[string]string{
 			"NODE_ENV": "production",
 		},

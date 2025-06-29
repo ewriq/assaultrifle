@@ -1,6 +1,7 @@
 package Container
 
 import (
+	"assaultrifle/Log"
 	"fmt"
 	"os/exec"
 	"strings"
@@ -9,12 +10,12 @@ import (
 )
 
 func StartContainer(id string) error {
-	fmt.Println("🚀 Container başlatılıyor...")
+	Log.Set("🚀 Container başlatılıyor..."+ id)
 	return pouch.Start(id)
 }
 
 func PullImage(img string) error {
-	fmt.Println("📦 Image çekiliyor...")
+	Log.Set("📦 Image çekiliyor..."+ img)
 	if err := pouch.Pull(img); err != nil {
 		return fmt.Errorf("image çekilemedi: %v", err)
 	}
@@ -22,21 +23,23 @@ func PullImage(img string) error {
 }
 
 func StopContainer(id string) error {
+	Log.Set("🚀 Container durduruluyor"+ id);
 	return pouch.Stop(id)
 }
 
 func GetContainerStatus(id string) (map[string]string, error) {
+	Log.Set("🚀 Container status çekildi"+ id);
 	return pouch.ContainerStats(id)
 }
 
 func DeleteContainer(id string) error {
+	Log.Set("🚀 Container silindi"+ id);
 	_, err := pouch.Remove(id, false)
 	return err
 }
 
 func RestartContainer(id string) error {
-	fmt.Println("🔁 Container yeniden başlatılıyor...")
-
+	
 	_, err := pouch.Restart(id)
 	if err != nil {
 		return fmt.Errorf("container yeniden başlatılamadı: %v", err)
@@ -47,8 +50,7 @@ func RestartContainer(id string) error {
 
 
 func GetContainerLogs(id string) (string, error) {
-    fmt.Println("📄 Container logları alınıyor...")
-
+	Log.Set("📄 Container logları alınıyor..."+ id);
     logs, err := pouch.Logs(id)
     if err != nil {
         return "", fmt.Errorf("log alınamadı: %v", err)
@@ -58,7 +60,7 @@ func GetContainerLogs(id string) (string, error) {
     return logs, nil
 }
 func ListContainerFiles(containerID, containerPath string) ([]string, error) {
-	fmt.Printf("📂 Container (%s) içindeki dosyalar listeleniyor: %s\n", containerID, containerPath)
+	Log.Set("📂 Container içindeki dosyalar listeleniyor:"+ containerID + containerPath);
 	
 	files, err := pouch.ListFiles(containerID, containerPath)
 	if err != nil {
@@ -69,13 +71,13 @@ func ListContainerFiles(containerID, containerPath string) ([]string, error) {
 
 
 func DeleteContainerFile(containerID, filePath string) error {
-	fmt.Printf("🗑️ Container (%s) içindeki dosya siliniyor: %s\n", containerID, filePath)
+	Log.Set("🗑️ Container  içindeki dosya siliniyor: "+ containerID+  filePath)
 	return pouch.DeleteFile(containerID, filePath)
 }
 
 
 func CopyFileToContainer(containerID, localFilePath, containerTargetPath string) error {
-	fmt.Printf("📤 Container (%s) içine dosya kopyalanıyor: %s -> %s\n", containerID, localFilePath, containerTargetPath)
+	Log.Set("📤 Container içine dosya kopyalanıyor: "+ containerID + localFilePath +  containerTargetPath)
 	return pouch.CopyToContainer(containerID, localFilePath, containerTargetPath)
 }
 
@@ -99,12 +101,13 @@ func ContainerStopAll() error {
 		return fmt.Errorf("durdurma hatası: %v\n%s", err, stopOutput)
 	}
 
-	fmt.Println("📦 Tüm container'lar durduruldu.")
+	Log.Set("📦 Tüm container'lar durduruldu.")
 	return nil
 }
 
 
 func DeleteAllContainer()  error {
+	Log.Set("📦 Tüm container'lar silindi.")
 	err := DeleteContainer("$(docker ps -aq)")
 	if err != nil {
 		return err
